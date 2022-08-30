@@ -2,3 +2,15 @@ logging:
   level: INFO
   loggers:
     com.github.behooked: DEBUG
+    
+database:
+
+  driverClass: org.postgresql.Driver
+
+  user: schindler
+  password: sUuupAsiCr6t
+
+  url: jdbc:postgresql:events
+
+  properties:
+    hibernate.hbm2ddl.auto: create
