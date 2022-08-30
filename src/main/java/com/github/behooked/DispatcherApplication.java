@@ -1,14 +1,27 @@
 package com.github.behooked;
 
+import com.github.behooked.core.Event;
+import com.github.behooked.db.EventDAO;
+import com.github.behooked.resources.EventResource;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
 
 public class DispatcherApplication extends Application<DispatcherConfiguration> {
 
     public static void main(final String[] args) throws Exception {
         new DispatcherApplication().run(args);
     }
+    
+    private final HibernateBundle<DispatcherConfiguration> hibernate = new HibernateBundle<DispatcherConfiguration>(Event.class) {
+		@Override
+		public DataSourceFactory getDataSourceFactory(DispatcherConfiguration configuration) {
+			return configuration.getDataSourceFactory();
+		}
+	};
 
     @Override
     public String getName() {
@@ -17,13 +30,14 @@ public class DispatcherApplication extends Application<DispatcherConfiguration> 
 
     @Override
     public void initialize(final Bootstrap<DispatcherConfiguration> bootstrap) {
-        // TODO: application initialization
+    	bootstrap.addBundle(hibernate);
     }
 
     @Override
     public void run(final DispatcherConfiguration configuration,
                     final Environment environment) {
-        // TODO: implement application
+    	final EventDAO eventDao = new EventDAO(hibernate.getSessionFactory());
+    	environment.jersey().register(new EventResource(eventDao));
     }
 
 }
