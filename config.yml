@@ -14,3 +14,13 @@ database:
 
   properties:
     hibernate.hbm2ddl.auto: create
+
+server:
+
+  applicationConnectors:
+    - type: http
+      port: 8082
+
+  adminConnectors:
+    - type: http
+      port: 8083    
