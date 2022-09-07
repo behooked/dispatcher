@@ -3,7 +3,6 @@ package com.github.behooked.core;
 import java.util.Date;
 import java.util.Objects;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.behooked.api.EventJSON;
 
 import jakarta.persistence.Column;
@@ -105,7 +104,7 @@ public class Event {
 	public int hashCode() {
 		return Objects.hash(id, name, timestamp, data);
 	}
-	
+
 	// convert EventJSON to Event
 	public static Event convertToEvent(final EventJSON eventJSON)
 	{
