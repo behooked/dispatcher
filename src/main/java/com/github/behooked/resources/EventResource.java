@@ -49,9 +49,24 @@ public class EventResource {
 				.collect(Collectors.toList());
 	}
 
+	/*
+	@GET
+	@Path("{name}")
+	@UnitOfWork
+	public EventJSON getEventByName(@PathParam("name") final String name) { 
+
+		final Event event = eventDAO.findByName(name); 
+
+		return EventJSON.from(event);  } 
+
+	 */
+
+
 	@GET
 	@Path("{id}")
-	@UnitOfWork public EventJSON getEventById(@PathParam("id") final long id) {
+	@UnitOfWork 
+	public EventJSON getEventById(@PathParam("id") final long id) {
+
 		final Event event = findSafely(id);
 
 		return EventJSON.from(event);  }
@@ -59,6 +74,11 @@ public class EventResource {
 
 	private Event findSafely(final long eventId) {
 		return eventDAO.findById(eventId).orElseThrow(() -> new NotFoundException("No such event")); }
+
+
+
+
+
 
 	@POST
 	@UnitOfWork
@@ -70,6 +90,10 @@ public class EventResource {
 			throw new ClientErrorException("Bad Request. The field 'name' must not be null", 400);
 		}
 
+		if ((eventJson.getTimestamp() == null))
+		{
+			throw new ClientErrorException("Bad Request. The field 'timestamp' must not be null", 400);
+		}
 
 		if ((eventJson.getData() == null))
 		{
@@ -82,13 +106,14 @@ public class EventResource {
 
 		EventJSON eventJSON =  EventJSON.from(createdEvent);
 
-		LOGGER.info(String.format("-----------------Notification received from Kafka-Connector: An Event occured. EventName was: %s -----------------------", eventJSON.getName()));
+		LOGGER.info("------------Received a notification from Kafka-Connector:  event-name = {} event-id = {} ----------------", eventJSON.getName(), event.getId());
+		//	LOGGER.info(String.format("----------- EventId was: %s ----------------", event.getId()));
+
+	    // send eventId and eventName to administration
+		administrationInformant.sendNotification(eventJSON.getName(), createdEvent.getId());
 
 
-		//  // send eventId and eventName to administration
-		administrationInformant.sendNotification(eventJSON.getName(), eventJSON.getId());
-
-		LOGGER.info("------------Request send to Administration to receive respective clien-data.---------------- ");
+		LOGGER.info("------------Request send to Administration to receive respective client-data.------------- ");
 
 		return EventJSON.from(createdEvent);
 
@@ -104,5 +129,7 @@ public class EventResource {
 		final Event event= findSafely(id);
 		eventDAO.delete(event);
 	}
+
+
 
 }

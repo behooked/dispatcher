@@ -19,8 +19,9 @@ public class EventJSON {
 	private String data;
 
 	@JsonCreator
-	public EventJSON(@JsonProperty("id") long id, @JsonProperty("name")String eventName, @JsonProperty("timestamp")Date timestamp, @JsonProperty("data") String data) {   // annotation necessary? because JsonNode is JSON anyway
-		this.name = eventName;
+	public EventJSON(@JsonProperty("id") long id, @JsonProperty("name")String name, @JsonProperty("timestamp")Date timestamp, @JsonProperty("data") String data) {  
+		this.id = id;
+		this.name = name;
 		this.timestamp = timestamp;
 		this.data = data;
 

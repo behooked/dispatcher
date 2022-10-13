@@ -20,6 +20,10 @@ import jakarta.persistence.Table;
 		name = "com.github.behooked.core.Event.findAll",
 		query = "SELECT e FROM Event e")
 
+@NamedQuery(
+		name = "com.github.behooked.core.Event.findByName",
+		query = "SELECT e FROM Event e WHERE e.name = :eventName")
+
 
 public class Event {
 
@@ -42,9 +46,8 @@ public class Event {
 
 	}
 
-	public Event(long id, String name, Date timestamp, String data) {
+	public Event(String name, Date timestamp, String data) {
 
-		this.id = id;
 		this.name = name;
 		this.timestamp = timestamp;
 		this.data = data;
@@ -108,6 +111,6 @@ public class Event {
 	// convert EventJSON to Event
 	public static Event convertToEvent(final EventJSON eventJSON)
 	{
-		return new Event(eventJSON.getId(), eventJSON.getName(),eventJSON.getTimestamp(), eventJSON.getData());
+		return new Event( eventJSON.getName(),eventJSON.getTimestamp(), eventJSON.getData());
 	}
 }

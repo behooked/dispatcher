@@ -8,6 +8,7 @@ import com.github.behooked.resources.EventResource;
 import com.github.behooked.resources.NotificationResource;
 
 import io.dropwizard.client.JerseyClientBuilder;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -40,8 +41,12 @@ public class DispatcherApplication extends Application<DispatcherConfiguration> 
 
 	@Override
 	public void initialize(final Bootstrap<DispatcherConfiguration> bootstrap) {
+
 		bootstrap.addBundle(hibernate);
 	}
+
+
+
 
 	@Override
 	public void run(final DispatcherConfiguration configuration,
@@ -49,32 +54,39 @@ public class DispatcherApplication extends Application<DispatcherConfiguration> 
 		final EventDAO eventDao = new EventDAO(hibernate.getSessionFactory());
 
 
-
-		final Client clientAdministrationInformant = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
+		final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
 				.build(getName());
 
-		environment.jersey().register(new EventResource(eventDao,clientAdministrationInformant));
+		environment.jersey().register(new EventResource(eventDao,client));
+        
+	//	environment.jersey().register(new NotificationResource(eventDao,client));
 
-		// register NotificationResource at private Endpoint
+		
+		// create new jersey servlet for admin port
 		DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(environment.metrics());
 		JerseyContainerHolder servletContainerHolder = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
 
 		// add servlet to admin-environment and map it to /admin/* 
 		environment.admin().addServlet("admin resources", servletContainerHolder.getContainer()).addMapping("/api/*");
-		
+
+
+		// create + register proxy for NotificationResource
+
 		Class<?> [] classArray = new Class<?>[2];
 		classArray[0] = EventDAO.class;
-		
 		classArray[1]= Client.class;
 		Object [] constructorArguments = new Object [2];
 		constructorArguments[0] = eventDao;
-		constructorArguments[1] = clientAdministrationInformant;
+		constructorArguments[1] = client;
 
-		NotificationResource proxyNotificationResource = new UnitOfWorkAwareProxyFactory(hibernate) .create(NotificationResource.class, classArray, constructorArguments);
+		NotificationResource proxyNotificationResource = new UnitOfWorkAwareProxyFactory(hibernate).create(NotificationResource.class, classArray, constructorArguments);
 
 		jerseyConfig.register(proxyNotificationResource);
 		
+
+		//jerseyConfig.register(new NotificationResource(eventDao,client));
+
 		//enable Jackson
-				jerseyConfig.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper())); 
+		jerseyConfig.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper())); 
 	}
 }

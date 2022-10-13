@@ -15,36 +15,38 @@ public class EventDAO extends AbstractDAO<Event> {
 
 	public EventDAO(SessionFactory sessionFactory) {
 		super(sessionFactory);
-		
-	}
-	
-	  public Event create(final Event event) {
-	        return persist(event);
-	    }
 
-	    @SuppressWarnings("unchecked")
-	    public List<Event> findAll()
-	    {
-	        final Query<Event> namedQuery = (Query<Event>) namedQuery("com.github.behooked.core.Event.findAll");
-	                                             
-	        return list(namedQuery);  
-	    }
-	    
+	}
+
+	public Event create(final Event event) {
+		return persist(event);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Event> findAll()
+	{
+		final Query<Event> namedQuery = (Query<Event>) namedQuery("com.github.behooked.core.Event.findAll");
+
+		return list(namedQuery);  
+	}
+
+	/*
 	    @SuppressWarnings("unchecked")
 	    public Event findByName(final String eventName)
 	    {
 	       final Query<Event> namedQuery = (Query<Event>) namedQuery("com.github.behooked.core.Event.findByName"); 
-	     
-	      return namedQuery.setParameter("eventName", eventName).uniqueResult();
-	   
-	    }
 
-		public Optional<Event> findById(Long id) {
-			return Optional.ofNullable(get(id));
-		}
-		
-		
+	      return namedQuery.setParameter("eventName", eventName).uniqueResult();
+
+	    }
+	 */
+
+	public Optional<Event> findById(Long id) {
+		return Optional.ofNullable(get(id));
+	}
+
+
 		public void delete(Event event){
 			currentSession().delete(event);
 		}	
-}
+	}

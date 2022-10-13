@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 public class AdministrationInformant {
 
 	private final Client client;
-	private final String ADMINISTRATION_URL = "http://localhost:8080/notifications";
+	private final String ADMINISTRATION_URL = "http://localhost:8081/api/notifications";
 
 
 	public AdministrationInformant(final Client client)
