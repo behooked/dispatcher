@@ -24,7 +24,7 @@ The last line *hibernate.hbm2ddl.auto: create* guarantees that the database tabl
 
 -POST 
 
-``
+`curl -H "Content-Type: application/json" -X POST -d '{"name":"eventA", "timestamp": "2022-08-03", "data": "This is some dummydata." }' http://localhost:8082/events`
 
 
 ### Accessing the Website
