@@ -4,6 +4,7 @@ import com.github.behooked.db.EventDAO;
 
 import io.dropwizard.hibernate.UnitOfWork;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -82,7 +83,7 @@ public class EventResource {
 
 	@POST
 	@UnitOfWork
-	public EventJSON createEvent(@Valid final EventJSON eventJson) 
+	public EventJSON createEvent(@NotNull @Valid final EventJSON eventJson) 
 	{
 
 		if ((eventJson.getName() == null))
@@ -100,20 +101,16 @@ public class EventResource {
 			throw new ClientErrorException("Bad Request. The field 'data' must not be null", 400);
 		}
 
+		LOGGER.info("------------Received a notification. event-name = {} ---------------", eventJson.getName());
 
-		final Event event = Event.convertToEvent(eventJson);
-		final Event createdEvent = eventDAO.create(event);
+		final Event createdEvent = eventDAO.create(Event.convertToEvent(eventJson));
+		
+		LOGGER.info("------------New event created in database. event-name = {} event-id = {} ------------", createdEvent.getName(), createdEvent.getId());
+		LOGGER.info("------------Request send to Administration to receive respective client-data. event-name = {} event-id = {} ----------------", createdEvent.getName(), createdEvent.getId());
+		
+		// send eventId and eventName to administration
+		administrationInformant.sendNotification(createdEvent.getName(), createdEvent.getId());
 
-		EventJSON eventJSON =  EventJSON.from(createdEvent);
-
-		LOGGER.info("------------Received a notification from Kafka-Connector:  event-name = {} event-id = {} ----------------", eventJSON.getName(), event.getId());
-		//	LOGGER.info(String.format("----------- EventId was: %s ----------------", event.getId()));
-
-	    // send eventId and eventName to administration
-		administrationInformant.sendNotification(eventJSON.getName(), createdEvent.getId());
-
-
-		LOGGER.info("------------Request send to Administration to receive respective client-data.------------- ");
 
 		return EventJSON.from(createdEvent);
 

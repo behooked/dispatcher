@@ -77,8 +77,7 @@ public class NotificationResource {
 		// Access EventDao to get respective event + convert event to JSON - required to get payload for respective event from database
 		
 		Event event = findSafely(receivedEventId);
-		LOGGER.info(String.format("EventDao accessed. To check successful acces list event-name: %s", event.getName()));
-		
+		LOGGER.info(String.format("EventDao accessed. To check successful acces list event-Id: %s", event.getId()));
 		
 		final EventJSON eventJson= EventJSON.from(event);
 
@@ -94,7 +93,6 @@ public class NotificationResource {
 			
 		{
 
-		
 			payload = event.getData();
 
 			for (int i = 0; i < arrayClientData.size(); ++i) {
@@ -106,7 +104,7 @@ public class NotificationResource {
 
 				notificationSender.sendNotification(url, secret, payload);
 				
-				LOGGER.info("Registered clients have been informed about event."); 
+				LOGGER.info("Registered clients have been informed about event. eventId: {}---------------- " , receivedEventId); 
 
 			}
 		}
@@ -120,6 +118,8 @@ public class NotificationResource {
 		}
 
 */
+
+	
 		private Event findSafely(final long eventId) {
 			return eventDao.findById(eventId).orElseThrow(() -> new NotFoundException("No such Event"));
 		

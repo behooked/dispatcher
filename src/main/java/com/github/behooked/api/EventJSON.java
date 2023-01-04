@@ -8,14 +8,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.github.behooked.core.Event;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public class EventJSON {
 
 	private long id;
-
+    @NotEmpty
 	private String name;
-
 	private Date timestamp;
-
+    @NotEmpty
 	private String data;
 
 	@JsonCreator
