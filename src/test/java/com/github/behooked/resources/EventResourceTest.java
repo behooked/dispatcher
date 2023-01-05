@@ -108,14 +108,11 @@ public class EventResourceTest {
 		verify(EVENT_DAO).findById(2L); 
 	}
 
-/*
+
 	@Test
 	void createEvent() {
 
 		when(EVENT_DAO.create(any(Event.class))).thenReturn(event);
-		
-		// mock AdministrationInformant.sendNotification()
-		doNothing().when(ADMIN_INFORMANT).sendNotification(anyString(), anyLong());
 		
 		final Response response = EXT.target("/events")  
 				.request(MediaType.APPLICATION_JSON_TYPE)
@@ -123,6 +120,7 @@ public class EventResourceTest {
 
 		EventJSON newEvent = response.readEntity(EventJSON.class);
 
+		verify(ADMIN_INFORMANT).sendNotification(anyString(), anyLong());
 
 		assertThat(response.getStatusInfo(), is(Response.Status.OK)); 
 		assertThat(newEvent.getName(), is("eventName")); 
@@ -130,7 +128,4 @@ public class EventResourceTest {
 		assertThat(newEvent.getTimestamp()).isEqualTo(dummyDate);
 		assertThat(newEvent.getData()).isEqualTo("This is a test.");
 	}
-	
-	*/
-
 }
