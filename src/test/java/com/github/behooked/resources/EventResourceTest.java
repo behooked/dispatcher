@@ -44,7 +44,7 @@ public class EventResourceTest {
 	private static final AdministrationInformant ADMIN_INFORMANT = mock(AdministrationInformant.class);
 
 	private static final ResourceExtension EXT = ResourceExtension.builder() //
-			.addResource(new EventResource(EVENT_DAO, CLIENT)) //
+			.addResource(new EventResource(EVENT_DAO, ADMIN_INFORMANT)) //
 			.build();
 	
 	
