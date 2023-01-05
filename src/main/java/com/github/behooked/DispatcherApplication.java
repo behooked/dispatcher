@@ -2,6 +2,7 @@ package com.github.behooked;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.github.behooked.client.AdministrationInformant;
 import com.github.behooked.core.Event;
 import com.github.behooked.db.EventDAO;
 import com.github.behooked.resources.EventResource;
@@ -57,7 +58,7 @@ public class DispatcherApplication extends Application<DispatcherConfiguration> 
 		final Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
 				.build(getName());
 
-		environment.jersey().register(new EventResource(eventDao,client));
+		environment.jersey().register(new EventResource(eventDao, new AdministrationInformant(client)));
         
 	//	environment.jersey().register(new NotificationResource(eventDao,client));
 

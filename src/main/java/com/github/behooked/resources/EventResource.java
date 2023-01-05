@@ -13,7 +13,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
@@ -36,9 +35,9 @@ public class EventResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventResource.class);
 
-	public EventResource(final EventDAO eventDAO, final Client client) {
+	public EventResource(final EventDAO eventDAO, final AdministrationInformant adminInformant) {
 		this.eventDAO = eventDAO;
-		this.administrationInformant = new AdministrationInformant (client);
+		this.administrationInformant = adminInformant;
 	}
 
 	@GET
