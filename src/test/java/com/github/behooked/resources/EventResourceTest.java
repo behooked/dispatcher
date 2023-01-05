@@ -3,8 +3,6 @@ package com.github.behooked.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -30,8 +28,6 @@ import com.github.behooked.db.EventDAO;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -40,7 +36,6 @@ import jakarta.ws.rs.core.Response;
 public class EventResourceTest {
 
 	private static final EventDAO EVENT_DAO = mock(EventDAO.class);
-	private static final Client CLIENT = ClientBuilder.newClient();
 	private static final AdministrationInformant ADMIN_INFORMANT = mock(AdministrationInformant.class);
 
 	private static final ResourceExtension EXT = ResourceExtension.builder() //
