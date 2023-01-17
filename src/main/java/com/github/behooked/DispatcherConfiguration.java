@@ -11,6 +11,18 @@ import jakarta.validation.constraints.*;
 
 public class DispatcherConfiguration extends Configuration {
 
+	@NotEmpty
+	private String adminUrl;
+
+	@JsonProperty
+	public String getAdminUrl() {
+		return adminUrl;
+	}
+	@JsonProperty
+	public void setAdminUrl(String adminUrl) {
+		this.adminUrl = adminUrl;
+	}
+
 	@Valid
 	@NotNull
 	private DataSourceFactory database = new DataSourceFactory();
@@ -23,6 +35,20 @@ public class DispatcherConfiguration extends Configuration {
 	@JsonProperty("database")
 	public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
 		this.database = dataSourceFactory;
+	}
+	
+	// isTestRun
+	
+	private boolean testRun = false;
+	
+	@JsonProperty
+	public boolean isTestRun() {
+		return testRun;
+	}
+	
+	@JsonProperty
+	public void setTestRun(boolean testRun) {
+		this.testRun = testRun;
 	}
 
 	// Jersey-Client

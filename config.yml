@@ -1,3 +1,5 @@
+adminUrl: http://localhost:8081/api/notifications
+
 logging:
   level: INFO
   loggers:
@@ -7,7 +9,7 @@ database:
 
   driverClass: org.postgresql.Driver
 
-  user: schindler
+  user: lisa
   password: sUuupAsiCr6t
 
   url: jdbc:postgresql:events
@@ -23,4 +25,6 @@ server:
 
   adminConnectors:
     - type: http
-      port: 8084    
+      port: 8084
+      
+
