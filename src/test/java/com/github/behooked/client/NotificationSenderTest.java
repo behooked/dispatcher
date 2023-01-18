@@ -1,5 +1,7 @@
 package com.github.behooked.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -13,8 +15,8 @@ import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
-// wenn nur als test für Notificationresource möglich + dafür auch test Notificationresource von Admin beachten
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class NotificationSenderTest {
 
@@ -22,9 +24,7 @@ public class NotificationSenderTest {
     public static class PingResource {
         @POST
         public String ping(@HeaderParam("Behooked-Webhook-Secret") final String secret) {
-            return "pong";
-            
-            
+            return "Notification received.";          
         }
     }
     
@@ -43,6 +43,7 @@ public class NotificationSenderTest {
 
 		final NotificationSender notificationSender = new NotificationSender(client);
 	
-		notificationSender.sendNotification(dummyUrl, secret, payload);
+		Response response= notificationSender.sendNotification(dummyUrl, secret, payload);
+		assertEquals("Notification received.", response.readEntity(String.class));
     }
 }

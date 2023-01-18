@@ -22,12 +22,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.github.behooked.core.Event;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.behooked.api.EventJSON;
 import com.github.behooked.client.AdministrationInformant;
+import com.github.behooked.client.NotificationSender;
 import com.github.behooked.db.EventDAO;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -37,11 +44,12 @@ public class EventResourceTest {
 
 	private static final EventDAO EVENT_DAO = mock(EventDAO.class);
 	private static final AdministrationInformant ADMIN_INFORMANT = mock(AdministrationInformant.class);
-
+	private static final NotificationSender NOTIFICATION_SENDER = mock(NotificationSender.class);
+    private static final String adminUrl = "http//:test.io";
+    
 	private static final ResourceExtension EXT = ResourceExtension.builder() //
-			.addResource(new EventResource(EVENT_DAO, ADMIN_INFORMANT)) //
+			.addResource(new EventResource(EVENT_DAO, ADMIN_INFORMANT,adminUrl, NOTIFICATION_SENDER)) //
 			.build();
-	
 	
 	private Event event;
 	private long millis;   // random date for test purpose 02 January 1970
@@ -115,7 +123,7 @@ public class EventResourceTest {
 
 		EventJSON newEvent = response.readEntity(EventJSON.class);
 
-		verify(ADMIN_INFORMANT).sendNotification(anyString(), anyLong());
+		verify(ADMIN_INFORMANT).sendNotification(anyString(),anyString(), anyLong());
 
 		assertThat(response.getStatusInfo(), is(Response.Status.OK)); 
 		assertThat(newEvent.getName(), is("eventName")); 
@@ -123,4 +131,42 @@ public class EventResourceTest {
 		assertThat(newEvent.getTimestamp()).isEqualTo(dummyDate);
 		assertThat(newEvent.getData()).isEqualTo("This is a test.");
 	}
+	
+	@Path("/dummyClient")
+	public static class ExternalClientTestResource
+	{
+		@POST
+		public String receiveNotification (final String eventName, @HeaderParam("Behooked-Dispatcher-Notification-EventId")final Long eventId) {
+			
+			return "Notification received.";
+		}
+	}
+	
+	
+	@Test
+	void receiveNotification() {
+		
+		// create testData
+		final ObjectMapper mapper = new ObjectMapper();
+
+		final ArrayNode testClientData = mapper.createArrayNode();
+		ObjectNode dataSetEntry= mapper.createObjectNode();
+
+		dataSetEntry.put("url", "https://example.io");
+		dataSetEntry.put("secret", "seeecret");
+		testClientData.add(dataSetEntry);
+		
+		final Long testEventId = 1L;
+		// EventResource.setEVENT_ID(1L);
+		
+		final Response response = EXT.target("/events/dispatch")  
+				.request(MediaType.APPLICATION_JSON_TYPE).header("Behooked-Administration-EventId", testEventId)
+		.post(Entity.json(testClientData));
+			
+		assertThat(response.getStatusInfo(), is(Response.Status.NO_CONTENT)); 
+	}
+	
+	
+	
+	
 }
