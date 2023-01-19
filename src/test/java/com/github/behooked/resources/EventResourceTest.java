@@ -8,7 +8,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.ArrayList;
@@ -32,9 +31,6 @@ import com.github.behooked.db.EventDAO;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -44,6 +40,7 @@ public class EventResourceTest {
 
 	private static final EventDAO EVENT_DAO = mock(EventDAO.class);
 	private static final AdministrationInformant ADMIN_INFORMANT = mock(AdministrationInformant.class);
+	
 	private static final NotificationSender NOTIFICATION_SENDER = mock(NotificationSender.class);
     private static final String adminUrl = "http//:test.io";
     
@@ -51,6 +48,7 @@ public class EventResourceTest {
 			.addResource(new EventResource(EVENT_DAO, ADMIN_INFORMANT,adminUrl, NOTIFICATION_SENDER)) //
 			.build();
 	
+	private ArrayNode dummyClientData;
 	private Event event;
 	private long millis;   // random date for test purpose 02 January 1970
 	private java.util.Date dummyDate; 
@@ -63,6 +61,14 @@ public class EventResourceTest {
 		dummyDate= new java.util.Date(millis);
 		event = new Event("eventName",dummyDate,"This is a test.");
 		event.setId(1L);
+		
+		final ObjectMapper mapper = new ObjectMapper();
+	    dummyClientData = mapper.createArrayNode();
+		ObjectNode dataSetEntry= mapper.createObjectNode();
+
+		dataSetEntry.put("url", "https://example.io");
+		dataSetEntry.put("secret", "testSecret");
+		dummyClientData.add(dataSetEntry);
 	}
 
 	@AfterEach
@@ -71,7 +77,6 @@ public class EventResourceTest {
 		reset(EVENT_DAO);
 	}
 
-	
 	@Test
 	void listEvents() {
 
@@ -116,57 +121,22 @@ public class EventResourceTest {
 	void createEvent() {
 
 		when(EVENT_DAO.create(any(Event.class))).thenReturn(event);
+		when(ADMIN_INFORMANT.getClientData(anyString(), anyString())).thenReturn(dummyClientData);
 		
 		final Response response = EXT.target("/events")  
 				.request(MediaType.APPLICATION_JSON_TYPE)
 				.post(Entity.json(new EventJSON(1l,"eventName",dummyDate,"This is a test.")));
 
 		EventJSON newEvent = response.readEntity(EventJSON.class);
-
-		verify(ADMIN_INFORMANT).sendNotification(anyString(),anyString(), anyLong());
-
+	
+		verify(ADMIN_INFORMANT).getClientData(anyString(),anyString());
+		verify(NOTIFICATION_SENDER).sendNotification(anyString(),anyString(), anyString());
+		
 		assertThat(response.getStatusInfo(), is(Response.Status.OK)); 
 		assertThat(newEvent.getName(), is("eventName")); 
 		assertThat(newEvent.getId(), is(1L)); 
 		assertThat(newEvent.getTimestamp()).isEqualTo(dummyDate);
 		assertThat(newEvent.getData()).isEqualTo("This is a test.");
 	}
-	
-	@Path("/dummyClient")
-	public static class ExternalClientTestResource
-	{
-		@POST
-		public String receiveNotification (final String eventName, @HeaderParam("Behooked-Dispatcher-Notification-EventId")final Long eventId) {
-			
-			return "Notification received.";
-		}
-	}
-	
-	
-	@Test
-	void receiveNotification() {
 		
-		// create testData
-		final ObjectMapper mapper = new ObjectMapper();
-
-		final ArrayNode testClientData = mapper.createArrayNode();
-		ObjectNode dataSetEntry= mapper.createObjectNode();
-
-		dataSetEntry.put("url", "https://example.io");
-		dataSetEntry.put("secret", "seeecret");
-		testClientData.add(dataSetEntry);
-		
-		final Long testEventId = 1L;
-		// EventResource.setEVENT_ID(1L);
-		
-		final Response response = EXT.target("/events/dispatch")  
-				.request(MediaType.APPLICATION_JSON_TYPE).header("Behooked-Administration-EventId", testEventId)
-		.post(Entity.json(testClientData));
-			
-		assertThat(response.getStatusInfo(), is(Response.Status.NO_CONTENT)); 
-	}
-	
-	
-	
-	
 }
