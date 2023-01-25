@@ -1,7 +1,6 @@
+adminUrl: http://localhost:8082/testClient
 
 testRun: true
-
-adminUrl: http://localhost:8082/testClient/dummyAdministrationService  #ExternalResourceTestClient
 
 database:
   driverClass: org.h2.Driver
