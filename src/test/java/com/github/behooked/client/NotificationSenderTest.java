@@ -23,7 +23,7 @@ public class NotificationSenderTest {
     @Path("/ping")
     public static class PingResource {
         @POST
-        public String ping(@HeaderParam("Behooked-Webhook-Secret") final String secret) {
+        public String ping(@HeaderParam("X-Behooked-Webhook-Secret") final String secret) {
             return "Notification received.";          
         }
     }

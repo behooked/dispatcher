@@ -30,16 +30,6 @@ public class EventDAO extends AbstractDAO<Event> {
 		return list(namedQuery);  
 	}
 
-	/*
-	    @SuppressWarnings("unchecked")
-	    public Event findByName(final String eventName)
-	    {
-	       final Query<Event> namedQuery = (Query<Event>) namedQuery("com.github.behooked.core.Event.findByName"); 
-
-	      return namedQuery.setParameter("eventName", eventName).uniqueResult();
-
-	    }
-	 */
 
 	public Optional<Event> findById(Long id) {
 		return Optional.ofNullable(get(id));

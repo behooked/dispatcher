@@ -20,10 +20,8 @@ public class NotificationSender {
 
 	public Response sendNotification(final String url, final String secret, final String payload)
 	{
-
-		Response response= client.target(url).request(MediaType.APPLICATION_JSON).header("Behooked-Webhook-Secret", secret)
-		.post(Entity.json(payload));
-		// secret is send via Header to check authentification for resource update
-		return response;
+		// secret is send via Header so that the client can check authentication of the sender
+		return client.target(url).request(MediaType.APPLICATION_JSON).header("X-Behooked-Webhook-Secret", secret)
+				.post(Entity.json(payload));
 	}
 }

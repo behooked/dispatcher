@@ -1,12 +1,10 @@
 package com.github.behooked.core;
 
 
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.github.behooked.api.EventJSON;
-
 
 public class EventTest {
 
@@ -30,6 +28,5 @@ public class EventTest {
 		EventJSON eventJson = new EventJSON(1l,"eventName",dummyDate,"This is a test.");
 
 		assertTrue(Event.convertToEvent(eventJson) instanceof Event);
-
 	}
 }
