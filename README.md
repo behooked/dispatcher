@@ -33,9 +33,6 @@ http://localhost:8082/events
 
 List events by Id: http://localhost:8082/events/{id}
 
-### Accessing private Endpoint
-
-http://localhost:8084/api/dispatcher
 
 Metrics
 ---
