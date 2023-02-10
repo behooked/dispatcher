@@ -1,6 +1,6 @@
 # Dispatcher
 
-How to start the Administration application
+How to start the Dispatcher application
 ---
 
 1. In your project directory run: `mvn clean install` to build your application
