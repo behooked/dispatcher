@@ -20,9 +20,7 @@ The application's configuration file "config.yml" will have to be adjusted accor
     
 The last line *hibernate.hbm2ddl.auto: create* guarantees that the database tables will be created automatically by Hibernate.
 
-### Call CRUD Functions: 
-
--POST 
+### Creating an event:
 
 `curl -H "Content-Type: application/json" -X POST -d '{"name":"eventA", "timestamp": "2022-08-03", "data": "This is some dummydata." }' http://localhost:8082/events`
 
