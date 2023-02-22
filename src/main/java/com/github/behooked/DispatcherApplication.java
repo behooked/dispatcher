@@ -5,7 +5,6 @@ import com.github.behooked.client.NotificationSender;
 import com.github.behooked.core.Event;
 import com.github.behooked.db.EventDAO;
 import com.github.behooked.resources.EventResource;
-import com.github.behooked.resources.ExternalResourceTestClient;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
@@ -47,10 +46,5 @@ public class DispatcherApplication extends Application<DispatcherConfiguration> 
 				.build(getName());
 		environment.jersey().register(new EventResource(eventDao, new AdministrationInformant(client),configuration.getAdminUrl(), new NotificationSender(client)));
 
-		if(configuration.isTestRun())
-		{   
-			environment.jersey().register(new ExternalResourceTestClient());
-
-		}
 	}
 }

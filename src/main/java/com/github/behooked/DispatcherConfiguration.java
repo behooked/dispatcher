@@ -37,19 +37,6 @@ public class DispatcherConfiguration extends Configuration {
 		this.database = dataSourceFactory;
 	}
 	
-	// isTestRun
-	
-	private boolean testRun = false;
-	
-	@JsonProperty
-	public boolean isTestRun() {
-		return testRun;
-	}
-	
-	@JsonProperty
-	public void setTestRun(boolean testRun) {
-		this.testRun = testRun;
-	}
 
 	// Jersey-Client
 
