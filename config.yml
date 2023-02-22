@@ -9,8 +9,8 @@ database:
 
   driverClass: org.postgresql.Driver
 
-  user: USER
-  password:  PASSWORD
+  user: lisa
+  password:  sUuupAsiCr6t
 
   url: jdbc:postgresql:events
 
